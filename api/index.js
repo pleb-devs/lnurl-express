@@ -17,7 +17,7 @@ app.use(cors({
 
 app.options('*', cors());
 
-await connect();
+connect();
 
 // Function to encode URL into bech32 format
 function encodeLnurl(url) {
