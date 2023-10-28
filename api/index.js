@@ -17,7 +17,10 @@ app.use(cors({
 
 app.options('*', cors());
 
-connect();
+connect().catch(error => {
+    console.error('Error connecting to LND:', error);
+});
+
 
 // Function to encode URL into bech32 format
 function encodeLnurl(url) {
