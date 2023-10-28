@@ -55,6 +55,7 @@ const invoiceEventStream = async () => {
 };
 
 module.exports = {
+    lnd,
   connect,
   createInvoice,
   invoiceEventStream,

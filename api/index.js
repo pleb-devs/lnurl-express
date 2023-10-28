@@ -3,7 +3,7 @@ const { bech32 } = require('bech32');
 const bodyParser = require('body-parser');
 const crypto = require('crypto');
 const cors = require('cors');
-const { connect, createInvoice } = require('../lnd');
+const { connect, createInvoice, lnd } = require('../lnd');
 
 const app = express();
 
@@ -24,6 +24,13 @@ function encodeLnurl(url) {
     const words = bech32.toWords(Buffer.from(url, 'utf8'));
     return bech32.encode('lnurl', words, 2000).toUpperCase();
 }
+
+app.get('/', (req, res) => {
+    res.json({
+        message: 'Hello from the LNURL-PAY sample backend!',
+        lnd: lnd.state
+    });
+});
 
 // Endpoint to retrieve the bech32 encoded LNURL and its QR code
 app.get('/getlnurl', async (req, res) => {
