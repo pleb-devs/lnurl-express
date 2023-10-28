@@ -9,25 +9,35 @@ const options = {
 
 const lnd = new LndGrpc(options);
 
-const connect = async () => {
+const maxRetries = 5;
+const baseDelay = 1000;  // initial delay is 1000ms, or 1 second
+
+const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+const connect = async (retryCount = 0) => {
   try {
     await lnd.connect();
 
     if (lnd.state !== "active") {
-      throw new Error(
-        "LND did not reach 'active' state within the expected time"
-      );
+      throw new Error("LND did not reach 'active' state within the expected time");
     }
-    
-    console.log(`LND gRPC connection state: ${lnd.state}`);
 
-    // Start the invoice event stream on successful connection
-    // We want to always be listening for invoice events while the server is running
-    invoiceEventStream();
+    console.log(`LND gRPC connection state: ${lnd.state}`);
+    // invoiceEventStream();  // Uncomment this line if you want to start the invoice event stream here
   } catch (e) {
     console.log("error", e);
+
+    if (retryCount < maxRetries) {
+      const delay = baseDelay * Math.pow(2, retryCount);  // Exponential backoff
+      console.log(`Retrying in ${delay}ms...`);
+      await sleep(delay);
+      await connect(retryCount + 1);  // Recursive retry
+    } else {
+      console.error('Max retries reached. Could not connect to LND.');
+    }
   }
 };
+
 
 const createInvoice = async ({ value, memo }) => {
   // Use the 'addInvoice' method from the Lightning service of the 'grpc' module to create an invoice.
