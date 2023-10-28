@@ -3,7 +3,7 @@ const { bech32 } = require('bech32');
 const bodyParser = require('body-parser');
 const crypto = require('crypto');
 const cors = require('cors');
-const { connect, createInvoice } = require('./lnd');
+const { connect, createInvoice } = require('../lnd');
 
 const app = express();
 
@@ -80,6 +80,4 @@ app.post('/decode', (req, res) => {
 });
 
 
-app.listen(3000, () => {
-    console.log('Server is running on port 3000');
-});
+module.exports = app;
