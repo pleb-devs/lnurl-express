@@ -28,7 +28,7 @@ function encodeLnurl(url) {
 app.get('/', (req, res) => {
     res.json({
         message: 'Hello from the LNURL-PAY sample backend!',
-        lnd: lnd
+        lnd: lnd.state
     });
 });
 
