@@ -3,7 +3,7 @@ const { bech32 } = require('bech32');
 const bodyParser = require('body-parser');
 const crypto = require('crypto');
 const cors = require('cors');
-const { connect, createInvoice } = require('../lnd');
+const { connect, createInvoice } = require('./lnd');
 
 const app = express();
 
