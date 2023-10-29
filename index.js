@@ -19,13 +19,11 @@ app.options('*', cors());
 
 connect();
 
-// Function to encode URL into bech32 format
 function encodeLnurl(url) {
     const words = bech32.toWords(Buffer.from(url, 'utf8'));
     return bech32.encode('lnurl', words, 2000).toUpperCase();
 }
 
-// Endpoint to retrieve the bech32 encoded LNURL and its QR code
 app.get('/getlnurl', async (req, res) => {
     const originalUrl = `${process.env.BACKEND_URL}/lnurl`
     const encodedLnurl = encodeLnurl(originalUrl);
@@ -41,8 +39,8 @@ app.get('/lnurl', (req, res) => {
     ];
     const response = {
         callback: `${process.env.BACKEND_URL}/callback`,
-        maxSendable: 1000000,  // milisatoshis
-        minSendable: 1000,     // milisatoshis
+        maxSendable: 100000000, // milisatoshis
+        minSendable: 1000,      // milisatoshis
         metadata: JSON.stringify(metadata),
         tag: "payRequest"
     };
@@ -71,15 +69,6 @@ app.get('/callback', async (req, res) => {
     };
 
     res.json(response);
-});
-
-
-app.post('/decode', (req, res) => {
-    const { lnurl } = req.body;
-    const { words } = bech32.decode(lnurl, 2000);
-    const requestByteArray = bech32.fromWords(words);
-    const decodedUrl = Buffer.from(requestByteArray).toString();
-    res.json({ decodedUrl });
 });
 
 

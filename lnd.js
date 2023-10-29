@@ -21,18 +21,12 @@ const connect = async () => {
     
     console.log(`LND gRPC connection state: ${lnd.state}`);
 
-    // Start the invoice event stream on successful connection
-    // We want to always be listening for invoice events while the server is running
-    // invoiceEventStream();
   } catch (e) {
     console.log("error", e);
   }
 };
 
 const createInvoice = async ({ value, description_hash }) => {
-  // Use the 'addInvoice' method from the Lightning service of the 'grpc' module to create an invoice.
-  // This method requires an object parameter with 'value' and 'memo' properties.
-  // This method is asynchronous, so we use 'await' to pause execution until it completes.
   const invoice = await lnd.services.Lightning.addInvoice({
     value: value,
     description_hash: description_hash,
@@ -41,22 +35,7 @@ const createInvoice = async ({ value, description_hash }) => {
   return invoice;
 };
 
-const invoiceEventStream = async () => {
-  await lnd.services.Lightning.subscribeInvoices({
-    add_index: 0,
-    settle_index: 0,
-  })
-    .on("data", async (data) => {
-      console.log("on data:", data);
-    })
-    .on("error", (err) => {
-      console.log(err);
-    });
-};
-
 module.exports = {
-    lnd,
   connect,
-  createInvoice,
-  invoiceEventStream,
+  createInvoice
 };
