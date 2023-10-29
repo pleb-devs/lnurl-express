@@ -3,7 +3,7 @@ const { bech32 } = require('bech32');
 const bodyParser = require('body-parser');
 const crypto = require('crypto');
 const cors = require('cors');
-const { connect, createInvoice, lnd } = require('../lnd');
+const { connect, createInvoice } = require('../lnd');
 
 const app = express();
 
@@ -17,23 +17,13 @@ app.use(cors({
 
 app.options('*', cors());
 
-connect().catch(error => {
-    console.error('Error connecting to LND:', error);
-});
-
+connect();
 
 // Function to encode URL into bech32 format
 function encodeLnurl(url) {
     const words = bech32.toWords(Buffer.from(url, 'utf8'));
     return bech32.encode('lnurl', words, 2000).toUpperCase();
 }
-
-app.get('/', (req, res) => {
-    res.json({
-        message: 'Hello from the LNURL-PAY sample backend!',
-        lnd: lnd.state
-    });
-});
 
 // Endpoint to retrieve the bech32 encoded LNURL and its QR code
 app.get('/getlnurl', async (req, res) => {
@@ -90,4 +80,6 @@ app.post('/decode', (req, res) => {
 });
 
 
-module.exports = app;
+app.listen(process.env.PORT || 3000, () => {
+    console.log(`Server listening on port ${process.env.PORT || 3000}`);
+});
