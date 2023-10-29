@@ -29,13 +29,13 @@ const connect = async () => {
   }
 };
 
-const createInvoice = async ({ value, memo }) => {
+const createInvoice = async ({ value, description_hash }) => {
   // Use the 'addInvoice' method from the Lightning service of the 'grpc' module to create an invoice.
   // This method requires an object parameter with 'value' and 'memo' properties.
   // This method is asynchronous, so we use 'await' to pause execution until it completes.
   const invoice = await lnd.services.Lightning.addInvoice({
     value: value,
-    memo: memo,
+    description_hash: description_hash,
   });
 
   return invoice;

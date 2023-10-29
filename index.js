@@ -53,13 +53,15 @@ app.get('/callback', async (req, res) => {
     const { amount } = req.query;
 
     const metadata = [["text/plain", "Sample LNURL-PAY endpoint"]];
-    const hash = crypto.createHash('sha256').update(JSON.stringify(metadata), 'utf8').digest('hex');
+    const metadataString = JSON.stringify(metadata);
+    const hash = crypto.createHash('sha256').update(metadataString).digest('hex');
     
-    const memo = `LNURL-PAY ${hash}`;
-    // Convert amount from milisatoshis to satoshis
+    const descriptionHash = Buffer.from(hash, 'hex').toString('base64'); // Encoding as base64
+
+    // Convert amount from millisatoshis to satoshis
     const value = parseInt(amount) / 1000;
 
-    const invoice = await createInvoice({ value, memo });
+    const invoice = await createInvoice({ value, description_hash: descriptionHash });
 
     console.log(invoice);
 
@@ -70,6 +72,7 @@ app.get('/callback', async (req, res) => {
 
     res.json(response);
 });
+
 
 app.post('/decode', (req, res) => {
     const { lnurl } = req.body;
